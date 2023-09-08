@@ -46,10 +46,7 @@ hazard_half_normal = function(lambda, sigma, dist_matrix) {
   return (prob_matrix)
 }
 
-prob_matrix = hazard_half_normal(lambda = lambda, sigma = sigma, dist_matrix = dist_mic_gibbon)
-
-
-
+detection_prob_matrix = hazard_half_normal(lambda = lambda, sigma = sigma, dist_matrix = dist_mic_gibbon)
 
 
 
