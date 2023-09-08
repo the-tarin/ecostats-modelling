@@ -16,13 +16,18 @@ survey_area = x_perimeter * y_perimeter
 expected_gibbon_groups = intensity * survey_area
 
 # homogeneous Poisson point process for getting gibbon coordinates
-x_gibbon_group <- runif(expected_gibbon_groups, 0, x_perimeter)
-y_gibbon_group <- runif(expected_gibbon_groups, 0, y_perimeter)
+x_gibbon_group <- round(runif(expected_gibbon_groups, 0, x_perimeter))
+y_gibbon_group <- round(runif(expected_gibbon_groups, 0, y_perimeter))
 
 gibbon_group_coords = cbind(x_gibbon_group, y_gibbon_group)
 
 # TODO: this plot looks like ass, please fix
 plot(x_gibbon_group, y_gibbon_group)
+
+lambda = 500
+sigma = 50
+
+
 
 
 
