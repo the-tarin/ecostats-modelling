@@ -1,4 +1,3 @@
-library(secr)
 set.seed(123)
 
 # x and y in square survey site with dimensions 10kmx10km with markers every 2000m
@@ -24,8 +23,10 @@ y_gibbon_group <- round(runif(expected_gibbon_groups, 0, y_perimeter))
 gibbon_group_coords = cbind(x_gibbon_group, y_gibbon_group)
 gibbon_group_coords = as.matrix(gibbon_group_coords)
 
-# TODO: this plot looks like ass, please fix
-plot(x_gibbon_group, y_gibbon_group)
+{
+plot(x_gibbon_group, y_gibbon_group, type = "p", col = "blue", pch = 1, xlab = "X-coordinate (m)", ylab = "Y-coordinate (m)")
+points(mic_coords[,1], mic_coords[,2], type = "p", col = "red", pch = 15)
+}
 
 # euclidean distance for detector to gibbon observation
 dist_mic_gibbon <- matrix(NA, nrow = nrow(mic_coords), ncol = nrow(gibbon_group_coords))
@@ -39,6 +40,7 @@ for (i in 1:nrow(dist_mic_gibbon)) {
 # half normal hazard distribution
 lambda = 500
 sigma = 50
+
 
 
 
