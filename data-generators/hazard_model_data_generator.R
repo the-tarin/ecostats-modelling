@@ -37,7 +37,7 @@ for (i in 1:nrow(dist_mic_gibbon)) {
   }
 }
 
-# half normal hazard distribution
+# half normal hazard distribution for probablity matrix
 lambda = 50
 sigma = 500
 
@@ -48,5 +48,11 @@ hazard_half_normal = function(lambda, sigma, dist_matrix) {
 
 detection_prob_matrix = hazard_half_normal(lambda = lambda, sigma = sigma, dist_matrix = dist_mic_gibbon)
 
+# weighted Bernoulli trails for each gibbon group to mic for detected/undetected
+detection_matrix <- matrix(NA, nrow = nrow(mic_coords), ncol = nrow(gibbon_group_coords))
 
-
+for (i in 1:nrow(dist_mic_gibbon)) {
+  for (j in 1:ncol(dist_mic_gibbon)) {
+    detection_matrix[i, j] <- rbinom(size = 1, n = 1, prob = detection_prob_matrix[i,j])
+  }
+}
