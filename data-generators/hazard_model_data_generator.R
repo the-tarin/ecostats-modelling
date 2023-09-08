@@ -38,11 +38,15 @@ for (i in 1:nrow(dist_mic_gibbon)) {
 }
 
 # half normal hazard distribution
-lambda = 500
-sigma = 50
+lambda = 50
+sigma = 500
 
+hazard_half_normal = function(lambda, sigma, dist_matrix) {
+  prob_matrix = 1 - exp(-lambda * exp((-1 * dist_matrix^2) / (2 * sigma^2)))
+  return (prob_matrix)
+}
 
-
+prob_matrix = hazard_half_normal(lambda = lambda, sigma = sigma, dist_matrix = dist_mic_gibbon)
 
 
 
