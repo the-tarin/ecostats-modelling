@@ -1,3 +1,4 @@
+library(secr)
 set.seed(123)
 
 # x and y in square survey site with dimensions 10kmx10km with markers every 2000m
@@ -38,6 +39,8 @@ for (i in 1:nrow(dist_mic_gibbon)) {
 # half normal hazard distribution
 lambda = 500
 sigma = 50
+
+
 
 
 
