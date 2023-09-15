@@ -1,4 +1,5 @@
 set.seed(123)
+library(lubridate)
 
 # x and y in square survey site with dimensions 10km x 10km with markers every 2000m
 # mics
@@ -79,13 +80,15 @@ colnames(gibbon_group_df)[1] = "gibbon_group_id"
 
 # generate random ground truth call times
 # todo: generate calls sequentially as events are dependent
+# todo: sort out datetime zones
 dawn_chorus_start_time = as.POSIXct("2023-01-01 04:00:00", tz = "UTC")
 dawn_chorus_end_time = as.POSIXct("2023-01-01 05:00:00", tz = "UTC")
 
 call_timestamps = as.POSIXct(runif(nrow(gibbon_group_df), dawn_chorus_start_time, dawn_chorus_end_time), origin = "1970-01-01", tz = "UTC")
+call_datetimes = format(call_timestamps, format = "%Y-%m-%d %H:%M:%S")
 
-gibbon_group_df = cbind(gibbon_group_df, call_timestamps)
-colnames(gibbon_group_df)[4] = "call_timestamps"
+gibbon_group_df = cbind(gibbon_group_df, call_datetimes)
+colnames(gibbon_group_df)[4] = "call_datetimes"
 
 # normal distribution for bearing measurement
 
