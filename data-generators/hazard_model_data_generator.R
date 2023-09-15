@@ -59,7 +59,7 @@ for (i in 1:nrow(dist_mic_gibbon)) {
 }
 
 # plot detected gibbon groups for chosen mic
-plot_select = 9
+plot_select = 12
 
 for (i in plot_select) {
   detection_gibbon_group_idx = which(detection_matrix[i,] == 1)
@@ -68,4 +68,25 @@ for (i in plot_select) {
   points(mic_coords[,1], mic_coords[,2], type = "p", col = "red", pch = 15)
   points(x_gibbon_group[detection_gibbon_group_idx], y_gibbon_group[detection_gibbon_group_idx], type = "p", col = "green", pch = 15)
 }
+
+# create dataframes for analysis
+mic_df = cbind(1:nrow(mic_coords), mic_coords)
+colnames(mic_df)[1] = "mic_id"
+
+# these are ground truth locations of each gibbon group
+gibbon_group_df = cbind(1:nrow(gibbon_group_coords), gibbon_group_coords)
+colnames(gibbon_group_df)[1] = "gibbon_group_id"
+
+# normal distribution for bearing measurement
+
+
+# detector_ID, bearing, time, call_ID, animal_ID
+for (i in 1:length(mic_coords)) {
+  
+}
+gibbon_group_detection_df = 
+
+
+# bearing information
+
 
