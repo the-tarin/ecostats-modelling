@@ -73,14 +73,24 @@ for (i in plot_select) {
 mic_df = cbind(1:nrow(mic_coords), mic_coords)
 colnames(mic_df)[1] = "mic_id"
 
-# these are ground truth locations of each gibbon group
+# these are ground truth locations of each gibbon group and exact call times
 gibbon_group_df = cbind(1:nrow(gibbon_group_coords), gibbon_group_coords)
 colnames(gibbon_group_df)[1] = "gibbon_group_id"
+
+# generate random ground truth call times
+# todo: generate calls sequentially as events are dependent
+dawn_chorus_start_time = as.POSIXct("2023-01-01 04:00:00", tz = "UTC")
+dawn_chorus_end_time = as.POSIXct("2023-01-01 05:00:00", tz = "UTC")
+
+call_timestamps = as.POSIXct(runif(nrow(gibbon_group_df), dawn_chorus_start_time, dawn_chorus_end_time), origin = "1970-01-01", tz = "UTC")
+
+gibbon_group_df = cbind(gibbon_group_df, call_timestamps)
+colnames(gibbon_group_df)[4] = "call_timestamps"
 
 # normal distribution for bearing measurement
 
 
-# detector_ID, bearing, time, call_ID, animal_ID
+# detector_ID, call_ID, time, bearing, animal_ID
 for (i in 1:length(mic_coords)) {
   
 }
