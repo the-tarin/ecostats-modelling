@@ -32,10 +32,12 @@ points(mic_coords[,1], mic_coords[,2], type = "p", col = "red", pch = 15)
 
 # euclidean distance for detector to gibbon observation
 dist_mic_gibbon <- matrix(NA, nrow = nrow(mic_coords), ncol = nrow(gibbon_group_coords))
+bearing_mic_gibbon <- matrix(NA, nrow = nrow(mic_coords), ncol = nrow(gibbon_group_coords))
 
 for (i in 1:nrow(dist_mic_gibbon)) {
   for (j in 1:ncol(dist_mic_gibbon)) {
     dist_mic_gibbon[i, j] <- sqrt(sum((mic_coords[i, ] - gibbon_group_coords[j, ])^2))
+    bearing_mic_gibbon[i, j] <- atan((mic_coords[i, 2] - gibbon_group_coords[j, 2]) / (mic_coords[i, 1] - gibbon_group_coords[j, 1]))
   }
 }
 
@@ -95,9 +97,14 @@ colnames(gibbon_group_df)[4] = "call_datetimes"
 
 # detector_ID, call_ID, measured_call_datetime, measured_bearing, ground_truth_animal_ID
 for (i in 1:length(mic_df)) {
-  ground_truth_detection_gibbon_group_idx = which(detection_matrix[i,] == 1)
-  gibbon_group_df[detection_gibbon_group_idx,"call_datetime"]
-  ground_truth_call_datetime =
+  # construct dataframe for each mic
+  ground_truth_animal_ID = which(detection_matrix[i,] == 1)
+  ground_truth_call_datetime = gibbon_group_df[detection_gibbon_group_idx,"call_datetime"]
+  # compute measured call time considering speed of sound
+  
+  
+  
+  ground_truth_call_datetime = 
   measured_call_datetime = 
   ground_truth_bearings = 
   measured_bearings = 
