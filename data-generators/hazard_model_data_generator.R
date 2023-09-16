@@ -12,7 +12,7 @@ colnames(mic_coords) = c('x_mic', 'y_mic')
 mic_coords = as.matrix(mic_coords)
 
 # expectation of gibbon groups in survey area
-intensity = 0.000001
+intensity = 0.000001 # modelling parameter
 x_perimeter = 10000
 y_perimeter = 10000
 survey_area = x_perimeter * y_perimeter
@@ -43,8 +43,8 @@ for (i in 1:nrow(dist_mic_gibbon)) {
 }
 
 # half normal hazard distribution for probability matrix
-lambda = 50
-sigma = 500
+lambda = 50 # modelling parameter
+sigma = 500 # modelling parameter
 
 hazard_half_normal = function(lambda, sigma, dist_matrix) {
   prob_matrix = 1 - exp(-lambda * exp((-1 * dist_matrix^2) / (2 * sigma^2)))
@@ -76,7 +76,7 @@ for (i in plot_select) {
 }
 
 # plot mics which detected a certain gibbon group
-plot_select = 1
+plot_select = 29
 
 for (i in plot_select) {
   detection_mic_idx = which(detection_matrix[,i] == 1)
@@ -108,13 +108,14 @@ gibbon_group_df = cbind(gibbon_group_df, call_datetimes)
 colnames(gibbon_group_df)[4] = "call_datetime"
 
 # speed of sound (m/s)
-speed_of_sound = (331 * 1000) / (60 * 60) 
-von_mises_kappa = 4
+speed_of_sound = 331
+von_mises_kappa = 4 # modelling parameter
 
 recording_df = data.frame()
 
-for (i in 1:length(mic_df)-1) {
+for (i in 1:nrow(mic_df)) {
   # construct detection dataframe for each mic
+  print(i)
   recording_temp = data.frame()
   ground_truth_animal_ID = which(detection_matrix[i,] == 1)
   print(ground_truth_animal_ID)
@@ -126,7 +127,7 @@ for (i in 1:length(mic_df)-1) {
   print(ground_truth_call_datetime)
   
   measured_call_timestamp = ground_truth_call_timestamp + dist_mic_gibbon[i, ground_truth_animal_ID] / speed_of_sound
-  print(measured_call_datetime)
+  print(measured_call_timestamp)
   measured_call_datetime = as.POSIXct(measured_call_timestamp, origin = "1970-01-01", tz = "UTC")
   print(measured_call_datetime)
   
@@ -144,7 +145,4 @@ for (i in 1:length(mic_df)-1) {
   recording_temp = cbind(rep(i, times = length(ground_truth_animal_ID)), ground_truth_animal_ID, ground_truth_call_datetime, measured_call_datetime, ground_truth_bearing, measured_bearing)
   recording_df = rbind(recording_df, recording_temp)
 }
-
-# bearing information
-
 
