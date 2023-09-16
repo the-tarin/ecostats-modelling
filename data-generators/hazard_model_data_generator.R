@@ -80,7 +80,6 @@ plot_select = 20
 
 for (i in plot_select) {
   detection_mic_idx = which(detection_matrix[,i] == 1)
-  print(detection_mic_idx)
   plot(x_gibbon_group, y_gibbon_group, type = "p", col = "blue", pch = 1, xlab = "X-coordinate (m)", ylab = "Y-coordinate (m)")
   points(mic_coords[,1], mic_coords[,2], type = "p", col = "black", pch = 15)
   points(x_gibbon_group[i], y_gibbon_group[i], type = "p", col = "red", pch = 15)
@@ -104,8 +103,10 @@ dawn_chorus_end_time = as.POSIXct("2023-01-01 05:00:00", tz = "UTC")
 call_datetimes = as.POSIXct(runif(nrow(gibbon_group_df), dawn_chorus_start_time, dawn_chorus_end_time), origin = "1970-01-01", tz = "UTC")
 call_timestamps = as.integer(call_datetimes)
 
-gibbon_group_df = cbind(gibbon_group_df, call_datetimes)
-colnames(gibbon_group_df)[4] = "call_datetime"
+# gibbon_group_df = cbind(gibbon_group_df, call_datetimes)
+# colnames(gibbon_group_df)[4] = "call_datetime"
+
+### generate recording dataframe
 
 # speed of sound (m/s)
 speed_of_sound = 331
@@ -114,9 +115,8 @@ von_mises_kappa = 4 # modelling parameter
 recording_df = data.frame()
 
 for (i in 1:nrow(mic_df)) {
-  # construct detection dataframe for each mic
-  recording_temp = data.frame()
   ground_truth_animal_ID = which(detection_matrix[i,] == 1)
+  mic_ID = rep(i, times = length(ground_truth_animal_ID))
   
   # compute measured call time which considers speed of sound
   ground_truth_call_timestamp = call_timestamps[as.integer(gibbon_group_df[ground_truth_animal_ID])]
@@ -135,7 +135,10 @@ for (i in 1:nrow(mic_df)) {
   colnames(measured_bearing) = "measured_bearing"
   
   # binding dataframes for each mic
-  recording_temp = cbind(rep(i, times = length(ground_truth_animal_ID)), ground_truth_animal_ID, ground_truth_call_datetime, measured_call_datetime, ground_truth_bearing, measured_bearing)
+  recording_temp = cbind(mic_ID, ground_truth_animal_ID, ground_truth_call_datetime, measured_call_datetime, ground_truth_bearing, measured_bearing)
   recording_df = rbind(recording_df, recording_temp)
 }
 
+write.csv(mic_df, "../output/mic.csv", row.names=FALSE)
+write.csv(gibbon_group_df, "../output/gibbon_group.csv", row.names=FALSE)
+write.csv(recording_df, "../output/recording.csv", row.names=FALSE)
