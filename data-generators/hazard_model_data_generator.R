@@ -92,8 +92,8 @@ call_datetimes = format(call_timestamps, format = "%Y-%m-%d %H:%M:%S")
 gibbon_group_df = cbind(gibbon_group_df, call_datetimes)
 colnames(gibbon_group_df)[4] = "call_datetimes"
 
-# von mises distribution for bearing measurement
-
+# speed of sound (m/s)
+speed_of_sound = (331 * 1000) / (60 * 60) 
 
 # detector_ID, call_ID, measured_call_datetime, measured_bearing, ground_truth_animal_ID
 for (i in 1:length(mic_df)) {
@@ -101,12 +101,11 @@ for (i in 1:length(mic_df)) {
   ground_truth_animal_ID = which(detection_matrix[i,] == 1)
   ground_truth_call_datetime = gibbon_group_df[detection_gibbon_group_idx,"call_datetime"]
   # compute measured call time considering speed of sound
+  measured_call_datetime = ground_truth_call_datetime + (dist_mic_gibbon / speed_of_sound)
   
-  
-  
-  ground_truth_call_datetime = 
-  measured_call_datetime = 
-  ground_truth_bearings = 
+  # compute measured bearing
+  ground_truth_bearing = bearing_mic_gibbon[i, ground_truth_animal_ID]
+  # von mises distribution for bearing measurement
   measured_bearings = 
 }
 
