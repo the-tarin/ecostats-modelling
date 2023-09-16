@@ -76,7 +76,7 @@ for (i in plot_select) {
 }
 
 # plot mics which detected a certain gibbon group
-plot_select = 29
+plot_select = 20
 
 for (i in plot_select) {
   detection_mic_idx = which(detection_matrix[,i] == 1)
@@ -115,21 +115,14 @@ recording_df = data.frame()
 
 for (i in 1:nrow(mic_df)) {
   # construct detection dataframe for each mic
-  print(i)
   recording_temp = data.frame()
   ground_truth_animal_ID = which(detection_matrix[i,] == 1)
-  print(ground_truth_animal_ID)
   
   # compute measured call time which considers speed of sound
   ground_truth_call_timestamp = call_timestamps[as.integer(gibbon_group_df[ground_truth_animal_ID])]
-  print(ground_truth_call_timestamp)
   ground_truth_call_datetime = as.POSIXct(ground_truth_call_timestamp, origin = "1970-01-01", tz = "UTC")
-  print(ground_truth_call_datetime)
-  
   measured_call_timestamp = ground_truth_call_timestamp + dist_mic_gibbon[i, ground_truth_animal_ID] / speed_of_sound
-  print(measured_call_timestamp)
   measured_call_datetime = as.POSIXct(measured_call_timestamp, origin = "1970-01-01", tz = "UTC")
-  print(measured_call_datetime)
   
   # compute measured bearing
   ground_truth_bearing = bearing_mic_gibbon[i, ground_truth_animal_ID]
