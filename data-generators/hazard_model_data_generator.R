@@ -27,7 +27,7 @@ gibbon_group_coords = as.matrix(gibbon_group_coords)
 # plot of mic grid and Poisson point process distributed gibbon groups
 {
 plot(x_gibbon_group, y_gibbon_group, type = "p", col = "blue", pch = 1, xlab = "X-coordinate (m)", ylab = "Y-coordinate (m)")
-points(mic_coords[,1], mic_coords[,2], type = "p", col = "red", pch = 15)
+points(mic_coords[,1], mic_coords[,2], type = "p", col = "black", pch = 15)
 }
 
 # euclidean distance for detector to gibbon observation
@@ -61,18 +61,32 @@ for (i in 1:nrow(dist_mic_gibbon)) {
   }
 }
 
+### plotting results
+
 # plot detected gibbon groups for chosen mic
 plot_select = 12
 
 for (i in plot_select) {
   detection_gibbon_group_idx = which(detection_matrix[i,] == 1)
-  print(detection_gibbon_group_idx)
   plot(x_gibbon_group, y_gibbon_group, type = "p", col = "blue", pch = 1, xlab = "X-coordinate (m)", ylab = "Y-coordinate (m)")
-  points(mic_coords[,1], mic_coords[,2], type = "p", col = "red", pch = 15)
+  points(mic_coords[,1], mic_coords[,2], type = "p", col = "black", pch = 15)
+  points(mic_coords[i,1], mic_coords[i,2], type = "p", col = "red", pch = 15)
   points(x_gibbon_group[detection_gibbon_group_idx], y_gibbon_group[detection_gibbon_group_idx], type = "p", col = "green", pch = 15)
 }
 
-# create dataframes for analysis
+# plot mics which detected a certain gibbon group
+plot_select = 1
+
+for (i in plot_select) {
+  detection_mic_idx = which(detection_matrix[,i] == 1)
+  print(detection_mic_idx)
+  plot(x_gibbon_group, y_gibbon_group, type = "p", col = "blue", pch = 1, xlab = "X-coordinate (m)", ylab = "Y-coordinate (m)")
+  points(mic_coords[,1], mic_coords[,2], type = "p", col = "black", pch = 15)
+  points(x_gibbon_group[i], y_gibbon_group[i], type = "p", col = "red", pch = 15)
+  points(mic_coords[detection_mic_idx,1], mic_coords[detection_mic_idx,2], type = "p", col = "green", pch = 15)
+}
+
+### create dataframes for analysis
 mic_df = cbind(1:nrow(mic_coords), mic_coords)
 colnames(mic_df)[1] = "mic_id"
 
@@ -97,10 +111,11 @@ speed_of_sound = (331 * 1000) / (60 * 60)
 
 # detector_ID, call_ID, measured_call_datetime, measured_bearing, ground_truth_animal_ID
 for (i in 1:length(mic_df)) {
-  # construct dataframe for each mic
+  # construct detection dataframe for each mic
   ground_truth_animal_ID = which(detection_matrix[i,] == 1)
-  ground_truth_call_datetime = gibbon_group_df[detection_gibbon_group_idx,"call_datetime"]
+  
   # compute measured call time considering speed of sound
+  ground_truth_call_datetime = gibbon_group_df[detection_gibbon_group_idx,"call_datetime"]
   measured_call_datetime = ground_truth_call_datetime + (dist_mic_gibbon / speed_of_sound)
   
   # compute measured bearing
