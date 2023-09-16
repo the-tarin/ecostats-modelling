@@ -90,15 +90,18 @@ call_datetimes = format(call_timestamps, format = "%Y-%m-%d %H:%M:%S")
 gibbon_group_df = cbind(gibbon_group_df, call_datetimes)
 colnames(gibbon_group_df)[4] = "call_datetimes"
 
-# normal distribution for bearing measurement
+# von mises distribution for bearing measurement
 
 
-# detector_ID, call_ID, time, bearing, animal_ID
-for (i in 1:length(mic_coords)) {
-  
+# detector_ID, call_ID, measured_call_datetime, measured_bearing, ground_truth_animal_ID
+for (i in 1:length(mic_df)) {
+  ground_truth_detection_gibbon_group_idx = which(detection_matrix[i,] == 1)
+  gibbon_group_df[detection_gibbon_group_idx,"call_datetime"]
+  ground_truth_call_datetime =
+  measured_call_datetime = 
+  ground_truth_bearings = 
+  measured_bearings = 
 }
-gibbon_group_detection_df = 
-
 
 # bearing information
 
