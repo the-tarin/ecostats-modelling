@@ -19,8 +19,8 @@ survey_area = x_perimeter * y_perimeter
 expected_gibbon_groups = intensity * survey_area
 
 # homogeneous Poisson point process for getting gibbon coordinates
-x_gibbon_group <- round(runif(expected_gibbon_groups, 0, x_perimeter))
-y_gibbon_group <- round(runif(expected_gibbon_groups, 0, y_perimeter))
+x_gibbon_group <- runif(expected_gibbon_groups, 0, x_perimeter)
+y_gibbon_group <- runif(expected_gibbon_groups, 0, y_perimeter)
 
 gibbon_group_coords = cbind(x_gibbon_group, y_gibbon_group)
 gibbon_group_coords = as.matrix(gibbon_group_coords)
@@ -31,6 +31,25 @@ plot(x_gibbon_group, y_gibbon_group, type = "p", col = "blue", pch = 1, xlab = "
 points(mic_coords[,1], mic_coords[,2], type = "p", col = "black", pch = 15)
 }
 
+# Calculate the bearing from mic to gibbon group
+calc_bearing = function(x_point_1, y_point_1, x_point_2, y_point_2) {
+  bearing = atan2(
+    y_point_2 - y_point_1,
+    x_point_2 - x_point_1
+  )
+  
+  # convert to range of radians [0,2pi] where bearing is taken clockwise from north (0 radians)
+  if (bearing <= 0) {
+    bearing = -1*bearing + 0.5*pi 
+  } else if ((bearing > 0) && (bearing <= 0.5*pi)) {
+    bearing = (0.5*pi - bearing)
+  } else {
+    bearing = (pi - bearing) + 1.5*pi
+  }
+  return(bearing)
+}
+
+
 # euclidean distance for detector to gibbon observation
 dist_mic_gibbon <- matrix(NA, nrow = nrow(mic_coords), ncol = nrow(gibbon_group_coords))
 bearing_mic_gibbon <- matrix(NA, nrow = nrow(mic_coords), ncol = nrow(gibbon_group_coords))
@@ -38,11 +57,15 @@ bearing_mic_gibbon <- matrix(NA, nrow = nrow(mic_coords), ncol = nrow(gibbon_gro
 for (i in 1:nrow(dist_mic_gibbon)) {
   for (j in 1:ncol(dist_mic_gibbon)) {
     dist_mic_gibbon[i, j] <- sqrt(sum((mic_coords[i, ] - gibbon_group_coords[j, ])^2))
-    bearing_mic_gibbon[i, j] <- atan((mic_coords[i, 2] - gibbon_group_coords[j, 2]) / (mic_coords[i, 1] - gibbon_group_coords[j, 1]))
+    bearing_mic_gibbon[i, j] <- calc_bearing(mic_coords[i, 1], mic_coords[i, 2], gibbon_group_coords[j, 1], gibbon_group_coords[j, 2])
   }
 }
 
+hist(bearing_mic_gibbon, breaks = 1000)
+
+
 # half normal hazard distribution for probability matrix
+# assuming each mic has same detection function
 lambda = 50 # modelling parameter
 sigma = 500 # modelling parameter
 
@@ -76,7 +99,7 @@ for (i in plot_select) {
 }
 
 # plot mics which detected a certain gibbon group
-plot_select = 20
+plot_select = 36
 
 for (i in plot_select) {
   detection_mic_idx = which(detection_matrix[,i] == 1)
@@ -110,7 +133,7 @@ call_timestamps = as.integer(call_datetimes)
 
 # speed of sound (m/s)
 speed_of_sound = 331
-von_mises_kappa = 4 # modelling parameter
+von_mises_kappa = 50 # modelling parameter
 
 recording_df = data.frame()
 
