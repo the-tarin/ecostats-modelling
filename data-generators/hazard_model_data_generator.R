@@ -111,20 +111,21 @@ for (i in plot_select) {
 # convert meter coordinates to lat, lon for RShiny App
 convert_coords = function(x_coord, y_coord) {
   ref_lat = 14.238574
-  ref_lon = 106.576923
+  ref_lon = 70
   earth_radius = 6371000
   
   # calculate lat, lon
+  # issue with this calculation
   lat = ref_lat + (y_coord / earth_radius) * (180 / pi)
-  lon = ref_lon + (x_coord / (earth_radius * cos(y_coord * pi / 180))) * (180 / pi)
+  lon = ref_lon + (x_coord / (earth_radius * cos(lat * pi / 180))) * (180 / pi)
   
   lat_lon = cbind(lat, lon)
   
   return(lat_lon)
 }
 
-mic_lat_lon = mic_coords
-mic_lat_lon = convert_coords(mic_lat_lon[,1], mic_lat_lon[,2])
+mic_lat_lon = data.frame()
+mic_lat_lon = convert_coords(mic_coords[,1], mic_coords[,2])
 mic_df = cbind(1:nrow(mic_lat_lon), mic_lat_lon)
 colnames(mic_df)[1] = "mic_id"
 
@@ -179,3 +180,5 @@ write.csv(mic_df, "../output/mic.csv", row.names=FALSE)
 write.csv(gibbon_group_df, "../output/gibbon_group.csv", row.names=FALSE)
 write.csv(recording_df, "../output/recording.csv", row.names=FALSE)
 
+### map plots for testing lat/lon
+plot(mic_df[,2], mic_df[,3], type = "p", pch = 19, col = "blue", xlab = "Longitude", ylab = "Latitude", main = "Scatterplot of Coordinates")
