@@ -61,9 +61,6 @@ for (i in 1:nrow(dist_mic_gibbon)) {
   }
 }
 
-hist(bearing_mic_gibbon, breaks = 1000)
-
-
 # half normal hazard distribution for probability matrix
 # assuming each mic has same detection function
 lambda = 50 # modelling parameter
@@ -110,7 +107,25 @@ for (i in plot_select) {
 }
 
 ### create dataframes for analysis
-mic_df = cbind(1:nrow(mic_coords), mic_coords)
+
+# convert meter coordinates to lat, lon for RShiny App
+convert_coords = function(x_coord, y_coord) {
+  ref_lat = 14.238574
+  ref_lon = 106.576923
+  earth_radius = 6371000
+  
+  # calculate lat, lon
+  lat = ref_lat + (y_coord / earth_radius) * (180 / pi)
+  lon = ref_lon + (x_coord / (earth_radius * cos(y_coord * pi / 180))) * (180 / pi)
+  
+  lat_lon = cbind(lat, lon)
+  
+  return(lat_lon)
+}
+
+mic_lat_lon = mic_coords
+mic_lat_lon = convert_coords(mic_lat_lon[,1], mic_lat_lon[,2])
+mic_df = cbind(1:nrow(mic_lat_lon), mic_lat_lon)
 colnames(mic_df)[1] = "mic_id"
 
 # these are ground truth locations of each gibbon group and exact call times
@@ -118,8 +133,6 @@ gibbon_group_df = cbind(1:nrow(gibbon_group_coords), gibbon_group_coords)
 colnames(gibbon_group_df)[1] = "gibbon_group_id"
 
 # generate random ground truth call times
-# todo: generate calls sequentially as events are dependent
-# todo: sort out datetime zones
 dawn_chorus_start_time = as.POSIXct("2023-01-01 04:00:00", tz = "UTC")
 dawn_chorus_end_time = as.POSIXct("2023-01-01 05:00:00", tz = "UTC")
 
@@ -165,3 +178,4 @@ for (i in 1:nrow(mic_df)) {
 write.csv(mic_df, "../output/mic.csv", row.names=FALSE)
 write.csv(gibbon_group_df, "../output/gibbon_group.csv", row.names=FALSE)
 write.csv(recording_df, "../output/recording.csv", row.names=FALSE)
+
