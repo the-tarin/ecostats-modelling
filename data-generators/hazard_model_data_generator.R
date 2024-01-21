@@ -108,32 +108,35 @@ for (i in plot_select) {
 
 ### create dataframes for analysis
 
-# convert meter coordinates to lat, lon for RShiny App
+# convert meter coordinates to lat, lng for RShiny App
 convert_coords = function(x_coord, y_coord) {
-  ref_lat = 14.238574
-  ref_lon = 70
+  ref_lat = 14.201252
+  ref_lng = 106.585033
   earth_radius = 6371000
   
-  # calculate lat, lon
+  # calculate lat, lng
   # issue with this calculation
   lat = ref_lat + (y_coord / earth_radius) * (180 / pi)
-  lon = ref_lon + (x_coord / (earth_radius * cos(lat * pi / 180))) * (180 / pi)
+  lng = ref_lng + (x_coord / (earth_radius * cos(lat * pi / 180))) * (180 / pi)
   
-  lat_lon = cbind(lat, lon)
+  lat_lng = cbind(lat, lng)
   
-  return(lat_lon)
+  return(lat_lng)
 }
 
-mic_lat_lon = data.frame()
-mic_lat_lon = convert_coords(mic_coords[,1], mic_coords[,2])
-mic_df = cbind(1:nrow(mic_lat_lon), mic_lat_lon)
+mic_lat_lng = data.frame()
+mic_lat_lng = convert_coords(mic_coords[,1], mic_coords[,2])
+mic_df = cbind(1:nrow(mic_lat_lng), mic_lat_lng)
 colnames(mic_df)[1] = "mic_id"
 
 # these are ground truth locations of each gibbon group and exact call times
-gibbon_group_df = cbind(1:nrow(gibbon_group_coords), gibbon_group_coords)
+gibbon_group_lat_lng = data.frame()
+gibbon_group_lat_lng = convert_coords(gibbon_group_coords[,1], gibbon_group_coords[,2])
+gibbon_group_df = cbind(1:nrow(gibbon_group_lat_lng), gibbon_group_lat_lng)
 colnames(gibbon_group_df)[1] = "gibbon_group_id"
 
 # generate random ground truth call times
+# we only generate one call per gibbon group
 dawn_chorus_start_time = as.POSIXct("2023-01-01 04:00:00", tz = "UTC")
 dawn_chorus_end_time = as.POSIXct("2023-01-01 05:00:00", tz = "UTC")
 
@@ -180,5 +183,8 @@ write.csv(mic_df, "../output/mic.csv", row.names=FALSE)
 write.csv(gibbon_group_df, "../output/gibbon_group.csv", row.names=FALSE)
 write.csv(recording_df, "../output/recording.csv", row.names=FALSE)
 
-### map plots for testing lat/lon
-plot(mic_df[,2], mic_df[,3], type = "p", pch = 19, col = "blue", xlab = "Longitude", ylab = "Latitude", main = "Scatterplot of Coordinates")
+### plot bearings for each anima_id (from mic) with measurement error distributions
+
+
+### map plots for testing lat/lng
+plot(mic_df[,2], mic_df[,3], type = "p", pch = 19, col = "blue", xlab = "longitude", ylab = "Latitude", main = "Scatterplot of Coordinates")
