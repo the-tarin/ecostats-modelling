@@ -179,6 +179,9 @@ for (i in 1:nrow(mic_df)) {
   recording_df = rbind(recording_df, recording_temp)
 }
 
+recording_ID = seq(nrow(recording_df))
+recording_df = cbind(recording_ID, recording_df)
+
 write.csv(mic_df, "../output/mic.csv", row.names=FALSE)
 write.csv(gibbon_group_df, "../output/gibbon_group.csv", row.names=FALSE)
 write.csv(recording_df, "../output/recording.csv", row.names=FALSE)
