@@ -139,12 +139,11 @@ gibbon_group_df = cbind(1:nrow(gibbon_group_lat_lng), gibbon_group_call_count, g
 colnames(gibbon_group_df)[1] = "gibbon_group_id"
 
 # generate random ground truth call times
-# we only generate one call per gibbon group
 dawn_chorus_start_time = as.POSIXct("2023-01-01 04:00:00", tz = "UTC")
 dawn_chorus_end_time = as.POSIXct("2023-01-01 05:00:00", tz = "UTC")
 
-call_datetimes = as.POSIXct(runif(sum(gibbon_group_df[,2]), dawn_chorus_start_time, dawn_chorus_end_time), origin = "1970-01-01", tz = "UTC")
-call_timestamps = as.integer(call_datetimes)
+# call_datetimes = as.POSIXct(runif(sum(gibbon_group_df[,2]), dawn_chorus_start_time, dawn_chorus_end_time), origin = "1970-01-01", tz = "UTC")
+# call_timestamps = as.integer(call_datetimes)
 
 # gibbon_group_df = cbind(gibbon_group_df, call_datetimes)
 # colnames(gibbon_group_df)[4] = "call_datetime"
@@ -158,12 +157,19 @@ von_mises_kappa = 50 # modelling parameter
 recording_df = data.frame()
 
 for (i in 1:nrow(mic_df)) {
-  ground_truth_animal_ID = which(detection_matrix[i,] == 1)
-  mic_ID = rep(i, times = length(ground_truth_animal_ID))
+  ground_truth_animal_ID <- which(detection_matrix[i,] >= 1)
+  print(ground_truth_animal_ID)
+  total_calls = sum(detection_matrix[i,ground_truth_animal_ID])
+  print(total_calls)
+  mic_ID = rep(i, times = total_calls)
+  print(mic_ID)
   
   # compute measured call time which considers speed of sound
-  ground_truth_call_timestamp = call_timestamps[as.integer(gibbon_group_df[ground_truth_animal_ID])]
-  ground_truth_call_datetime = as.POSIXct(ground_truth_call_timestamp, origin = "1970-01-01", tz = "UTC")
+  ground_truth_call_datetimes = as.POSIXct(runif(total_calls, dawn_chorus_start_time, dawn_chorus_end_time), origin = "1970-01-01", tz = "UTC")
+  ground_truth_call_timestamps = as.integer(ground_truth_call_datetimes)
+  # ground_truth_call_timestamp = call_timestamps[as.integer(gibbon_group_df[ground_truth_animal_ID])]
+  print(ground_truth_call_timestamps)
+  # ground_truth_call_datetime = as.POSIXct(ground_truth_call_timestamp, origin = "1970-01-01", tz = "UTC")
   measured_call_timestamp = ground_truth_call_timestamp + dist_mic_gibbon[i, ground_truth_animal_ID] / speed_of_sound
   measured_call_datetime = as.POSIXct(measured_call_timestamp, origin = "1970-01-01", tz = "UTC")
   
