@@ -158,27 +158,18 @@ recording_df = data.frame()
 
 for (i in 1:nrow(mic_df)) {
   ground_truth_animal_ID <- which(detection_matrix[i,] >= 1)
-  print(ground_truth_animal_ID)
   total_calls <- detection_matrix[i,ground_truth_animal_ID]
-  print(total_calls)
   ground_truth_animal_ID <- rep(ground_truth_animal_ID, total_calls)
-  print(ground_truth_animal_ID)
   mic_ID = rep(i, times = sum(total_calls))
-  print(mic_ID)
   
   # compute measured call time which considers speed of sound
   ground_truth_call_datetimes = as.POSIXct(runif(sum(total_calls), dawn_chorus_start_time, dawn_chorus_end_time), origin = "1970-01-01", tz = "UTC")
   ground_truth_call_timestamps = as.integer(ground_truth_call_datetimes)
-  # ground_truth_call_timestamp = call_timestamps[as.integer(gibbon_group_df[ground_truth_animal_ID])]
-  print(ground_truth_call_timestamps)
-  # ground_truth_call_datetime = as.POSIXct(ground_truth_call_timestamp, origin = "1970-01-01", tz = "UTC")
   measured_call_timestamps = ground_truth_call_timestamps + dist_mic_gibbon[i, ground_truth_animal_ID] / speed_of_sound
   measured_call_datetimes = as.POSIXct(measured_call_timestamps, origin = "1970-01-01", tz = "UTC")
-  print(measured_call_datetimes)
   
   # compute measured bearing
   ground_truth_bearing = bearing_mic_gibbon[i, ground_truth_animal_ID]
-  print(ground_truth_bearing)
   # von mises distribution for bearing measurement
   measured_bearing = data.frame()
   for (j in 1:length(ground_truth_animal_ID)) {
@@ -188,7 +179,7 @@ for (i in 1:nrow(mic_df)) {
   colnames(measured_bearing) = "measured_bearing"
   
   # binding dataframes for each mic
-  recording_temp = cbind(mic_ID, ground_truth_animal_ID, ground_truth_call_datetime, measured_call_datetime, ground_truth_bearing, measured_bearing)
+  recording_temp = cbind(mic_ID, ground_truth_animal_ID, ground_truth_call_datetimes, measured_call_datetimes, ground_truth_bearing, measured_bearing)
   recording_df = rbind(recording_df, recording_temp)
 }
 
