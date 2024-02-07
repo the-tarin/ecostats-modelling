@@ -12,7 +12,7 @@ colnames(mic_coords) = c('x_mic', 'y_mic')
 mic_coords = as.matrix(mic_coords)
 
 # expectation of gibbon groups in survey area
-intensity = 0.000001 # modelling parameter
+intensity = 0.000001 # modelling parameter gibbon groups / m2
 x_perimeter = 10000
 y_perimeter = 10000
 survey_area = x_perimeter * y_perimeter
