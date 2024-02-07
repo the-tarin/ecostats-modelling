@@ -25,8 +25,9 @@ y_gibbon_group <- runif(expected_gibbon_groups, 0, y_perimeter)
 gibbon_group_coords = cbind(x_gibbon_group, y_gibbon_group)
 gibbon_group_coords = as.matrix(gibbon_group_coords)
 
-# number of calls as poisson process count
-gibbon_group_call_count <- rpois(nrow(gibbon_group_coords), 3)
+# number of calls per gibbon group as poisson process count
+call_count_mean <- 3 # modelling parameter
+gibbon_group_call_count <- rpois(nrow(gibbon_group_coords), call_count_mean)
 
 # plot of mic grid and Poisson point process distributed gibbon groups
 {
@@ -142,7 +143,7 @@ colnames(gibbon_group_df)[1] = "gibbon_group_id"
 dawn_chorus_start_time = as.POSIXct("2023-01-01 04:00:00", tz = "UTC")
 dawn_chorus_end_time = as.POSIXct("2023-01-01 05:00:00", tz = "UTC")
 
-call_datetimes = as.POSIXct(runif(nrow(gibbon_group_df), dawn_chorus_start_time, dawn_chorus_end_time), origin = "1970-01-01", tz = "UTC")
+call_datetimes = as.POSIXct(runif(sum(gibbon_group_df[,2]), dawn_chorus_start_time, dawn_chorus_end_time), origin = "1970-01-01", tz = "UTC")
 call_timestamps = as.integer(call_datetimes)
 
 # gibbon_group_df = cbind(gibbon_group_df, call_datetimes)
