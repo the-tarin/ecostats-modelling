@@ -134,7 +134,7 @@ colnames(mic_df)[1] = "mic_id"
 # these are ground truth locations of each gibbon group and exact call times
 gibbon_group_lat_lng = data.frame()
 gibbon_group_lat_lng = convert_coords(gibbon_group_coords[,1], gibbon_group_coords[,2])
-gibbon_group_df = cbind(1:nrow(gibbon_group_lat_lng), gibbon_group_lat_lng)
+gibbon_group_df = cbind(1:nrow(gibbon_group_lat_lng), gibbon_group_call_count, gibbon_group_lat_lng)
 colnames(gibbon_group_df)[1] = "gibbon_group_id"
 
 # generate random ground truth call times
