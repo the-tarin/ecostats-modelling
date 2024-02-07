@@ -25,6 +25,9 @@ y_gibbon_group <- runif(expected_gibbon_groups, 0, y_perimeter)
 gibbon_group_coords = cbind(x_gibbon_group, y_gibbon_group)
 gibbon_group_coords = as.matrix(gibbon_group_coords)
 
+# number of calls as poisson process count
+gibbon_group_call_count <- rpois(nrow(gibbon_group_coords), 3)
+
 # plot of mic grid and Poisson point process distributed gibbon groups
 {
 plot(x_gibbon_group, y_gibbon_group, type = "p", col = "blue", pch = 1, xlab = "X-coordinate (m)", ylab = "Y-coordinate (m)")
@@ -48,7 +51,6 @@ calc_bearing = function(x_point_1, y_point_1, x_point_2, y_point_2) {
   }
   return(bearing)
 }
-
 
 # euclidean distance for detector to gibbon observation
 dist_mic_gibbon <- matrix(NA, nrow = nrow(mic_coords), ncol = nrow(gibbon_group_coords))
@@ -78,7 +80,7 @@ detection_matrix <- matrix(NA, nrow = nrow(mic_coords), ncol = nrow(gibbon_group
 
 for (i in 1:nrow(dist_mic_gibbon)) {
   for (j in 1:ncol(dist_mic_gibbon)) {
-    detection_matrix[i, j] <- rbinom(size = 1, n = 1, prob = detection_prob_matrix[i,j])
+    detection_matrix[i, j] <- rbinom(size = gibbon_group_call_count[j], n = 1, prob = detection_prob_matrix[i,j])
   }
 }
 
