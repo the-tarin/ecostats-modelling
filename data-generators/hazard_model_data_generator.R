@@ -188,10 +188,9 @@ recording_df = cbind(recording_ID, recording_df)
 
 write.csv(mic_df, "../output/mic.csv", row.names=FALSE)
 write.csv(gibbon_group_df, "../output/gibbon_group.csv", row.names=FALSE)
-write.csv(recording_df, "../output/recording.csv", row.names=FALSE)
+write.csv(recording_df, "../output/recording_multicall.csv", row.names=FALSE)
 
 ### plot bearings for each anima_id (from mic) with measurement error distributions
-
 
 ### map plots for testing lat/lng
 plot(mic_df[,2], mic_df[,3], type = "p", pch = 19, col = "blue", xlab = "longitude", ylab = "Latitude", main = "Scatterplot of Coordinates")
