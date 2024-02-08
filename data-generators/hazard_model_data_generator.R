@@ -142,8 +142,8 @@ colnames(gibbon_group_df)[1] = "gibbon_group_id"
 dawn_chorus_start_time = as.POSIXct("2023-01-01 04:00:00", tz = "UTC")
 dawn_chorus_end_time = as.POSIXct("2023-01-01 05:00:00", tz = "UTC")
 
-# call_datetimes = as.POSIXct(runif(sum(gibbon_group_df[,2]), dawn_chorus_start_time, dawn_chorus_end_time), origin = "1970-01-01", tz = "UTC")
-# call_timestamps = as.integer(call_datetimes)
+call_datetimes = as.POSIXct(runif(sum(gibbon_group_df[,2]), dawn_chorus_start_time, dawn_chorus_end_time), origin = "1970-01-01", tz = "UTC")
+call_timestamps = as.integer(call_datetimes)
 
 # gibbon_group_df = cbind(gibbon_group_df, call_datetimes)
 # colnames(gibbon_group_df)[4] = "call_datetime"
@@ -163,10 +163,10 @@ for (i in 1:nrow(mic_df)) {
   mic_ID = rep(i, times = sum(total_calls))
   
   # compute measured call time which considers speed of sound
-  ground_truth_call_datetimes = as.POSIXct(runif(sum(total_calls), dawn_chorus_start_time, dawn_chorus_end_time), origin = "1970-01-01", tz = "UTC")
-  ground_truth_call_timestamps = as.integer(ground_truth_call_datetimes)
-  measured_call_timestamps = ground_truth_call_timestamps + dist_mic_gibbon[i, ground_truth_animal_ID] / speed_of_sound
-  measured_call_datetimes = as.POSIXct(measured_call_timestamps, origin = "1970-01-01", tz = "UTC")
+  ground_truth_call_datetime = as.POSIXct(runif(sum(total_calls), dawn_chorus_start_time, dawn_chorus_end_time), origin = "1970-01-01", tz = "UTC")
+  ground_truth_call_timestamp = as.integer(ground_truth_call_datetime)
+  measured_call_timestamp = ground_truth_call_timestamp + dist_mic_gibbon[i, ground_truth_animal_ID] / speed_of_sound
+  measured_call_datetime = as.POSIXct(measured_call_timestamp, origin = "1970-01-01", tz = "UTC")
   
   # compute measured bearing
   ground_truth_bearing = bearing_mic_gibbon[i, ground_truth_animal_ID]
@@ -179,7 +179,7 @@ for (i in 1:nrow(mic_df)) {
   colnames(measured_bearing) = "measured_bearing"
   
   # binding dataframes for each mic
-  recording_temp = cbind(mic_ID, ground_truth_animal_ID, ground_truth_call_datetimes, measured_call_datetimes, ground_truth_bearing, measured_bearing)
+  recording_temp = cbind(mic_ID, ground_truth_animal_ID, ground_truth_call_datetime, measured_call_datetime, ground_truth_bearing, measured_bearing)
   recording_df = rbind(recording_df, recording_temp)
 }
 
