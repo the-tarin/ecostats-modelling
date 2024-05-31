@@ -22,6 +22,8 @@ expected_gibbon_groups = intensity * survey_area
 x_gibbon_group <- runif(expected_gibbon_groups, 0, x_perimeter)
 y_gibbon_group <- runif(expected_gibbon_groups, 0, y_perimeter)
 
+gibbon_group_caller_gender <- sample(c("M", "F", NA), expected_gibbon_groups, replace = TRUE)
+
 gibbon_group_coords = cbind(x_gibbon_group, y_gibbon_group)
 gibbon_group_coords = as.matrix(gibbon_group_coords)
 
@@ -31,8 +33,8 @@ gibbon_group_call_count <- rpois(nrow(gibbon_group_coords), call_count_mean)
 
 # plot of mic grid and Poisson point process distributed gibbon groups
 {
-plot(x_gibbon_group, y_gibbon_group, type = "p", col = "blue", pch = 1, xlab = "X-coordinate (m)", ylab = "Y-coordinate (m)")
-points(mic_coords[,1], mic_coords[,2], type = "p", col = "black", pch = 15)
+  plot(x_gibbon_group, y_gibbon_group, type = "p", col = "blue", pch = 1, xlab = "X-coordinate (m)", ylab = "Y-coordinate (m)")
+  points(mic_coords[,1], mic_coords[,2], type = "p", col = "black", pch = 15)
 }
 
 # Calculate the bearing from mic to gibbon group
@@ -81,6 +83,7 @@ detection_matrix <- matrix(NA, nrow = nrow(mic_coords), ncol = nrow(gibbon_group
 
 for (i in 1:nrow(dist_mic_gibbon)) {
   for (j in 1:ncol(dist_mic_gibbon)) {
+    # another nested loop
     detection_matrix[i, j] <- rbinom(size = gibbon_group_call_count[j], n = 1, prob = detection_prob_matrix[i,j])
   }
 }
@@ -135,15 +138,20 @@ colnames(mic_df)[1] = "mic_id"
 # these are ground truth locations of each gibbon group and exact call times
 gibbon_group_lat_lng = data.frame()
 gibbon_group_lat_lng = convert_coords(gibbon_group_coords[,1], gibbon_group_coords[,2])
-gibbon_group_df = cbind(1:nrow(gibbon_group_lat_lng), gibbon_group_call_count, gibbon_group_lat_lng)
+gibbon_group_df = cbind(1:nrow(gibbon_group_lat_lng), gibbon_group_call_count, gibbon_group_lat_lng, gibbon_group_caller_gender)
 colnames(gibbon_group_df)[1] = "gibbon_group_id"
 
 # generate random ground truth call times
 dawn_chorus_start_time = as.POSIXct("2023-01-01 04:00:00", tz = "UTC")
 dawn_chorus_end_time = as.POSIXct("2023-01-01 05:00:00", tz = "UTC")
 
+# need to associate 
 call_datetimes = as.POSIXct(runif(sum(gibbon_group_df[,2]), dawn_chorus_start_time, dawn_chorus_end_time), origin = "1970-01-01", tz = "UTC")
 call_timestamps = as.integer(call_datetimes)
+
+x0 <- rep(as.matrix(gibbon_group_coords), gibbon_group_call_count)
+
+gibbon_group_coords <- as.matrix(gibbon_group_coords)
 
 # gibbon_group_df = cbind(gibbon_group_df, call_datetimes)
 # colnames(gibbon_group_df)[4] = "call_datetime"
@@ -178,8 +186,11 @@ for (i in 1:nrow(mic_df)) {
   }
   colnames(measured_bearing) = "measured_bearing"
   
+  # retrieve the gender for each detected gibbon group
+  measured_gender = gibbon_group_df$gibbon_group_caller_gender[ground_truth_animal_ID]
+  
   # binding dataframes for each mic
-  recording_temp = cbind(mic_ID, ground_truth_animal_ID, ground_truth_call_datetime, measured_call_datetime, ground_truth_bearing, measured_bearing)
+  recording_temp = cbind(mic_ID, measured_gender, ground_truth_animal_ID, ground_truth_call_datetime, measured_call_datetime, ground_truth_bearing, measured_bearing)
   recording_df = rbind(recording_df, recording_temp)
 }
 
