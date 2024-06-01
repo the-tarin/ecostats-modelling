@@ -138,7 +138,9 @@ colnames(mic_df)[1] = "mic_id"
 # these are ground truth locations of each gibbon group and exact call times
 gibbon_group_lat_lng = data.frame()
 gibbon_group_lat_lng = convert_coords(gibbon_group_coords[,1], gibbon_group_coords[,2])
-gibbon_group_df = cbind(1:nrow(gibbon_group_lat_lng), gibbon_group_call_count, gibbon_group_lat_lng, gibbon_group_caller_gender)
+gibbon_group_df = cbind(1:nrow(gibbon_group_lat_lng), gibbon_group_call_count, gibbon_group_lat_lng)
+gibbon_group_df <- as.data.frame(gibbon_group_df)
+gibbon_group_df <- cbind(gibbon_group_df, gibbon_group_caller_gender)
 colnames(gibbon_group_df)[1] = "gibbon_group_id"
 
 # generate random ground truth call times
@@ -149,7 +151,7 @@ dawn_chorus_end_time = as.POSIXct("2023-01-01 05:00:00", tz = "UTC")
 call_datetimes = as.POSIXct(runif(sum(gibbon_group_df[,2]), dawn_chorus_start_time, dawn_chorus_end_time), origin = "1970-01-01", tz = "UTC")
 call_timestamps = as.integer(call_datetimes)
 
-x0 <- rep(as.matrix(gibbon_group_coords), gibbon_group_call_count)
+# x0 <- rep(as.matrix(gibbon_group_coords), gibbon_group_call_count)
 
 gibbon_group_coords <- as.matrix(gibbon_group_coords)
 
@@ -196,6 +198,10 @@ for (i in 1:nrow(mic_df)) {
 
 recording_ID = seq(nrow(recording_df))
 recording_df = cbind(recording_ID, recording_df)
+
+# randomly make 10% of the bearing measurements NA
+na_indices <- sample(1:nrow(recording_df), size = 0.1 * nrow(recording_df))
+recording_df$measured_bearing[na_indices] <- NA
 
 write.csv(mic_df, "../output/mic.csv", row.names=FALSE)
 write.csv(gibbon_group_df, "../output/gibbon_group.csv", row.names=FALSE)
